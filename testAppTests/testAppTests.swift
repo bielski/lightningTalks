@@ -1,35 +1,47 @@
-//
-//  testAppTests.swift
-//  testAppTests
-//
-//  Created by Ewa Bielska on 6/17/17.
-//  Copyright © 2017 Ewa Bielska. All rights reserved.
-//
-
 import XCTest
 @testable import testApp
 
 class testAppTests: XCTestCase {
+    let timeout = 10.0
     
     override func setUp() {
         super.setUp()
-        // Put setup code here. This method is called before the invocation of each test method in the class.
     }
     
     override func tearDown() {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
         super.tearDown()
     }
     
-    func testExample() {
-        // This is an example of a functional test case.
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
+    func testExampleWaiter() {
+        // Open document expectation
+        let document = UIDocument(fileURL: URL(string: "/Users/ewa")!)
+        let documentExpectation = expectation(description: "Document opened")
+        documentExpectation.isInverted = true
+        
+        document.open() { success in
+            XCTAssert(success, "Failed to open document")
+            documentExpectation.fulfill()
+        }
+        
+        // Implicit wait (bezwględny, ślepy)
+        waitForExpectations(timeout: timeout)
+        
+        // Explicit wait (wyraźny,sprecyzowany)
+        wait(for: [documentExpectation], timeout: timeout, enforceOrder: true)
+        
+        XCTWaiter(delegate: self).wait(for: [documentExpectation], timeout: timeout)
+        
+        let result = XCTWaiter.wait(for: [documentExpectation], timeout: timeout)
+        if result == .timedOut {
+            // Handle timeout
+        }
+        
+        // Waiter delegates to test
+        // Waiter returns result
     }
     
     func testPerformanceExample() {
-        // This is an example of a performance test case.
         self.measure {
-            // Put the code you want to measure the time of here.
         }
     }
     

@@ -1,36 +1,54 @@
-//
-//  testAppUITests.swift
-//  testAppUITests
-//
-//  Created by Ewa Bielska on 6/17/17.
-//  Copyright © 2017 Ewa Bielska. All rights reserved.
-//
-
 import XCTest
 
 class testAppUITests: XCTestCase {
-        
+    
+    var testApp: XCUIApplication!
+    var secondTestApp: XCUIApplication!
+    
     override func setUp() {
         super.setUp()
-        
-        // Put setup code here. This method is called before the invocation of each test method in the class.
-        
-        // In UI tests it is usually best to stop immediately when a failure occurs.
         continueAfterFailure = false
-        // UI tests must launch the application that they test. Doing this in setup will make sure it happens for each test method.
-        XCUIApplication().launch()
-
-        // In UI tests it’s important to set the initial state - such as interface orientation - required for your tests before they run. The setUp method is a good place to do this.
+        
+        testApp = XCUIApplication(bundleIdentifier: "codework.testApp")
+        testApp.launch()
+        
+        // Switch to different app
+        //secondTestApp = XCUIApplication(bundleIdentifier: "codework.secondTestApp")
+        //secondTestApp.activate()
     }
     
-    override func tearDown() {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
-        super.tearDown()
+    func testExampleFirstMatch() {
+        // Traditional queries
+        // protect against interacting with multiple matches
+        testApp.buttons["Done"].tap()
+        
+        // First match queries
+        testApp.buttons.firstMatch.tap() // bad idea
+        testApp.buttons["Done"].firstMatch.tap() // better idea
     }
     
-    func testExample() {
-        // Use recording to get started writing UI tests.
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
+    func testExampleActivity() {
+        XCTContext.runActivity(named: "Tap button using activity") { _ in
+            let button = testApp.buttons["Done"].firstMatch
+            button.tap()
+        }
     }
     
+    func testExampleScreenshotAttachment() {
+        XCTContext.runActivity(named: "Gather screenshots") { activity in
+            // Capture screenshot for screen
+            let mainScreen =  XCUIScreen.main
+            let fullScreenshot = mainScreen.screenshot()
+            let fullScreenshotAttachment = XCTAttachment(screenshot: fullScreenshot)
+            fullScreenshotAttachment.lifetime = .keepAlways
+            activity.add(fullScreenshotAttachment)
+            
+            // Capture screenshot for button
+            let button =  testApp.buttons["Done"]
+            let buttonScreenshot = button.screenshot()
+            let buttonScreenshotAttachment = XCTAttachment(screenshot: fullScreenshot)
+            buttonScreenshotAttachment.lifetime = .keepAlways
+            activity.add(buttonScreenshotAttachment)
+        }
+    }
 }
