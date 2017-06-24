@@ -19,8 +19,7 @@ class testAppUITests: XCTestCase {
     
     func testExampleFirstMatch() {
         // Traditional queries
-        // protect against interacting with multiple matches
-        testApp.buttons["Done"].tap()
+        //testApp.buttons["Done"].tap()
         
         // First match queries
         testApp.buttons.firstMatch.tap() // bad idea
@@ -34,21 +33,13 @@ class testAppUITests: XCTestCase {
         }
     }
     
-    func testExampleScreenshotAttachment() {
+    func testExampleMainScreenshotAttachment() {
         XCTContext.runActivity(named: "Gather screenshots") { activity in
             // Capture screenshot for screen
-            let mainScreen =  XCUIScreen.main
-            let fullScreenshot = mainScreen.screenshot()
+            let fullScreenshot = XCUIScreen.main.screenshot()
             let fullScreenshotAttachment = XCTAttachment(screenshot: fullScreenshot)
             fullScreenshotAttachment.lifetime = .keepAlways
             activity.add(fullScreenshotAttachment)
-            
-            // Capture screenshot for button
-            let button =  testApp.buttons["Done"]
-            let buttonScreenshot = button.screenshot()
-            let buttonScreenshotAttachment = XCTAttachment(screenshot: fullScreenshot)
-            buttonScreenshotAttachment.lifetime = .keepAlways
-            activity.add(buttonScreenshotAttachment)
         }
     }
 }

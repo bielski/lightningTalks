@@ -2,7 +2,7 @@ import XCTest
 @testable import testApp
 
 class testAppTests: XCTestCase {
-    let timeout = 10.0
+    let timeout = 1.0
     
     override func setUp() {
         super.setUp()
@@ -13,36 +13,24 @@ class testAppTests: XCTestCase {
     }
     
     func testExampleWaiter() {
-        // Open document expectation
-        let document = UIDocument(fileURL: URL(string: "/Users/ewa")!)
-        let documentExpectation = expectation(description: "Document opened")
-        documentExpectation.isInverted = true
+        // Example expectation
+        let exampleExpectation = expectation(description: "Example expectation")
+        exampleExpectation.isInverted = true
         
-        document.open() { success in
-            XCTAssert(success, "Failed to open document")
-            documentExpectation.fulfill()
-        }
-        
-        // Implicit wait (bezwględny, ślepy)
+        // Implicit wait
         waitForExpectations(timeout: timeout)
         
-        // Explicit wait (wyraźny,sprecyzowany)
-        wait(for: [documentExpectation], timeout: timeout, enforceOrder: true)
+        // Explicit wait with XCTWaiter
+        // #1
+        wait(for: [exampleExpectation], timeout: timeout, enforceOrder: true)
         
-        XCTWaiter(delegate: self).wait(for: [documentExpectation], timeout: timeout)
+        // #2
+        XCTWaiter(delegate: self).wait(for: [exampleExpectation], timeout: timeout)
         
-        let result = XCTWaiter.wait(for: [documentExpectation], timeout: timeout)
+        // #3
+        let result = XCTWaiter.wait(for: [exampleExpectation], timeout: timeout)
         if result == .timedOut {
             // Handle timeout
         }
-        
-        // Waiter delegates to test
-        // Waiter returns result
     }
-    
-    func testPerformanceExample() {
-        self.measure {
-        }
-    }
-    
 }
